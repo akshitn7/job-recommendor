@@ -1,0 +1,3 @@
+-- Defines the PostgreSQL jobs table structure. 
+-- Contains columns for job title, company, location, job type, salary range, description, 
+-- required skills array, source site, source URL, and posted date. Run once to set up the database.
