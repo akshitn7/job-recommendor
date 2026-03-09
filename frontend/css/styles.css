@@ -1,2 +1,11 @@
 /* All styling for the application. Covers upload area, drag and drop UI, job cards, 
 match percentage badge, skill chips, modal, loading spinner, and empty states. */
+/* for upload box */
+#uploadBox{
+border:2px dashed gray;
+padding:40px;
+text-align:center;
+cursor:pointer;
+width:300px;
+margin:auto;
+}
