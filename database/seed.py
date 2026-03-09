@@ -123,6 +123,9 @@ def clean_skill_token(skill):
     cleaned = [w for w in words if w not in NOISE_WORDS]
     return " ".join(cleaned).strip()
 
+def clean_yoe(yoe):
+    yoe = yoe.split('-')[0].split('+')[0]
+    return yoe
 #============================================================
 # SKILL EXTRACTION
 #============================================================
@@ -191,7 +194,6 @@ def extract_with_llm(unmatched):
     Expected Output: ["data analysis", "python", "machine learning", "metasploit", "wireshark"]"""
 
     try:
-        try:
         response = client.models.generate_content(
             model=model,
             contents=prompt,
@@ -205,14 +207,77 @@ def extract_with_llm(unmatched):
         return skills
 
     except Exception as e:
-        print(f"LLM failed: {e} — skipping unmatched chunks")
+        print(f"LLM failed: {e} — skipping unmatched skills")
         return unmatched
 
 #============================================================
 # SEEDING JOBS
 #============================================================
 def seed_jobs(cursor, rows):
-    return 
+    skill_cache = {}
+    inserted_jobs = 0
+    inserted_skills = 0
+
+    def get_or_create_skill(skill_name):
+        if skill_name in skill_cache:
+            return skill_cache[skill_name]
+        cursor.execute("SELECT id FROM skills WHERE name = %s", (skill_name,))
+        result = cursor.fetchone()
+        if result:
+            skill_id = result[0]
+        else:
+            cursor.execute(
+                "INSERT INTO skills (name) VALUES (%s) RETURNING id",
+                (skill_name,)
+            )
+            skill_id = cursor.fetchone()[0]
+        skill_cache[skill_name] = skill_id
+        return skill_id
+
+    for row in rows:
+        title = row["Title"].strip()
+        experience_level = row["ExperienceLevel"].strip()
+        years_of_exp = clean_yoe(row["YearsOfExperience"])
+        description = row["Responsibilities"].strip()
+        raw_skills = row["Skills"].strip()
+
+        if not title or not raw_skills:
+            continue
+
+        company = random.choice(COMPANIES)
+        location = random.choice(LOCATIONS)
+        job_type = random.choice(JOB_TYPES)
+        salary_min, salary_max = get_salary(experience_level)
+        posted_at  = random_posted_date()
+        source_url = make_source_url(company, title)
+
+        cursor.execute("""
+            INSERT INTO jobs (
+                title, company, location, job_type,
+                experience_level, years_of_experience,
+                salary_min, salary_max, description,
+                posted_at, source_url
+            ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            RETURNING id
+        """, (
+            title, company, location, job_type,
+            experience_level, years_of_exp,
+            salary_min, salary_max, description,
+            posted_at, source_url
+        ))
+
+        job_id = cursor.fetchone()[0]
+        inserted_jobs += 1
+
+        cleaned_skills = extract_skills(raw_skills)
+
+        for skill in cleaned_skills:
+            skill_id = get_or_create_skill(skill)
+            cursor.execute("""
+                INSERT INTO job_skills (job_id, skill_id)
+                VALUES (%s, %s) """, (job_id, skill_id))
+            inserted_skills += 1
+    return inserted_jobs, inserted_skills
 
 #===========================================================
 # MAIN
@@ -233,8 +298,9 @@ def main():
     cursor = conn.cursor()
     try:
         print("Seeding Jobs from Dataset")
-        seed_jobs(cursor, rows)
+        inserted_jobs, inserted_skills = seed_jobs(cursor, rows)
         print("Database Seeded Succesfully")
+        print(f"Inserted Jobs : {inserted_jobs}, Inserted Skills : {inserted_skills}")
     
     except Exception as e:
         conn.rollback()
