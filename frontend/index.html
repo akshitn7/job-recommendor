@@ -2,26 +2,36 @@
 No page reloads — everything happens on this single page. -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <link rel="stylesheet" href="css/styles.css">
+
     <title>HireAble</title>
+    <script src="js/theme.js"></script>
 </head>
+
 <body>
+
     <!-- navigation bar -->
-    <nav class="navbar">
-        <div class="logo">JobMatch AI</div>
-        <ul class="nav-links">
-            <li><a href="#">How it works</a></li>
-            <li><a href="#">Jobs</a></li>
-            <li><a href="#">Skill Gaps</a></li>
-        </ul>
-        <button class="upload-btn">Upload Resume</button>
-    </nav>
+    <header>
+        <nav class="navbar">
+            <div class="logo">HireAble</div>
+            <ul class="nav-links">
+                <li><a href="#">How it works</a></li>
+                <li><a href="#">Jobs</a></li>
+                <li><a href="#">Skill Gaps</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle" title="Toggle light mode">🌙</button>
+            <button class="upload-btn">Upload Resume</button>
+        </nav>
+    </header>
     <!-- headings -->
     <h1 align="center">Your Resume.<br>Your Perfect Role.</h1>
     <p align="center">Upload your resume, explore matching jobs,<br> and discover skills that can help you advance.</p>
+    
     <!-- upload box -->
     <div class="upload-box" id="uploadBox">
     <input type="file" id="resumeInput" accept=".pdf,.docx" hidden>
@@ -29,5 +39,7 @@ No page reloads — everything happens on this single page. -->
     <small>PDF or DocX • Max size 5MB</small>
     </div>
     <p id="fileName"></p>
+
+    
 </body>
 </html>
