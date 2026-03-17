@@ -1,8 +1,9 @@
 /* All styling for the application. Covers upload area, drag and drop UI, job cards, 
 match percentage badge, skill chips, modal, loading spinner, and empty states. */
-/* Riot Mobile Theme - Color palette: Dark Navy (#010A13), Purple (#6E40AA), Gold (#C89B3C), Cyan (#0DD3E6) */
+
+/* Color palette: Dark Navy (#010A13), Purple (#6E40AA), Gold (#C89B3C), Cyan (#0DD3E6) */
+
 /* for upload box */
-/*color pallete: (#010A13), (#6E40AA), (#C89B3C), (#0DD3E6) */
 #uploadBox{
     border: 2px dashed #0DD3E6;
     padding: 40px;
@@ -12,12 +13,12 @@ match percentage badge, skill chips, modal, loading spinner, and empty states. *
     margin: auto;
     background-color: #0A1428;
     border-radius: 8px;
-    transition: background-color 0.3s;
 }
-
 #uploadBox:hover {
     background-color: #6E40AA;
 }
+
+/* body */
 body {
     background-color: #010A13;
     color: #FFFFFF;
@@ -32,6 +33,7 @@ h1 {
 p {
     color: #FFFFFF;
 }
+
 /* navigationn bar */
 header {
     background-color: #0A1428;
