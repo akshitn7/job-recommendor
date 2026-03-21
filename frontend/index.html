@@ -32,14 +32,47 @@ No page reloads — everything happens on this single page. -->
     <h1 align="center">Your Resume.<br>Your Perfect Role.</h1>
     <p align="center">Upload your resume, explore matching jobs,<br> and discover skills that can help you advance.</p>
     
-    <!-- upload box -->
-    <div class="upload-box" id="uploadBox">
-    <input type="file" id="resumeInput" accept=".pdf,.docx" hidden>
-    <p id="uploadText">Drop your Resume here<br> or <span class="browse">Browse File</span></p>
-    <small>PDF or DocX • Max size 5MB</small>
+    <!-- upload section with gradient background -->
+    <div class="upload-section">
+        <!-- upload box -->
+        <div class="upload-box" id="uploadBox">
+        <input type="file" id="resumeInput" accept=".pdf,.docx" hidden>
+        <p id="uploadText">Drop your Resume here<br> or <span class="browse">Browse File</span></p>
+        <small>PDF or DocX • Max size 5MB</small>
+        </div>
+        <p id="fileName"></p>
     </div>
-    <p id="fileName"></p>
 
-    
+    <!-- Form to collect primary skill and location -->
+    <div class="form-container" id="formContainer" style="display: none;">
+        <div class="form-group">
+            <label for="primarySkill">Primary Skill</label>
+            <input type="text" id="primarySkill" placeholder="e.g., React, Python, Node.js" required>
+        </div>
+
+        <div class="form-group">
+            <label for="locationSearch">Preferred Locations</label>
+            <div class="location-search-container">
+                <input type="text" id="locationSearch" placeholder="Search locations...">
+                <div class="location-dropdown" id="locationDropdown">
+                    <ul id="locationList"></ul>
+                </div>
+            </div>
+            <div class="selected-locations" id="selectedLocations"></div>
+        </div>
+
+        <button class="submit-btn" id="submitBtn">Find Matching Jobs</button>
+    </div>
+
+    <!-- Results section -->
+    <div class="results-container" id="resultsContainer" style="display: none;">
+        <h2>Job Matches</h2>
+        <div id="jobResults"></div>
+    </div>
+
+    <script src="js/location-search.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/upload.js"></script>
+    <script src="js/results.js"></script>
 </body>
 </html>
