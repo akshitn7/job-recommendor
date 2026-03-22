@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS jobs (
     location  VARCHAR(255),
     job_type VARCHAR(50) DEFAULT 'onsite',
     experience_level VARCHAR(50),
-    years_of_experience VARCHAR(20),
+    years_of_experience INTEGER,
     salary_min INTEGER,
     salary_max INTEGER,
     description TEXT,
