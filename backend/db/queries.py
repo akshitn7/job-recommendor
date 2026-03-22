@@ -19,11 +19,8 @@ def get_db():
         db.close()
  
 def fetch_jobs(primary_skill, location):
-    """
-    Fetch jobs with their required skills from the database.
-    Filters by primary skill and location.
-    Returns a list of job dicts with required_skills list.
-    """
+    """Fetch jobs with their required skills from the database. Filtered by primary skill and location."""
+    
     db = next(get_db())
  
     try:
@@ -77,20 +74,19 @@ def fetch_jobs(primary_skill, location):
         jobs = []
         for row in rows:
             jobs.append({
-                "id":               row.id,
-                "title":            row.title,
-                "company":          row.company,
-                "location":         row.location,
-                "job_type":         row.job_type,
+                "id": row.id,
+                "title": row.title,
+                "company": row.company,
+                "location": row.location,
+                "job_type": row.job_type,
                 "experience_level": row.experience_level,
-                "salary_min":       row.salary_min,
-                "salary_max":       row.salary_max,
-                "source_url":       row.source_url,
-                "required_skills":  row.required_skills or []
+                "salary_min": row.salary_min,
+                "salary_max": row.salary_max,
+                "source_url": row.source_url,
+                "required_skills": row.required_skills or []
             })
  
         return jobs
  
     finally:
         db.close()
- 
