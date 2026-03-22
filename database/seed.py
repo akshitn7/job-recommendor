@@ -11,17 +11,18 @@ import os
 import sys
 from datetime import date, timedelta
 import psycopg2
-from google import genai
-from google.genai import types
 import json
-from dotenv import load_dotenv
-load_dotenv(os.path.join(os.path.dirname(__file__), '..', 'backend', '.env'))
+from groq import Groq
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import DATABASE_URL, GROQ_API_KEY, GROQ_MODEL
 #===========================================================
-# DATABASE CONNECTION
+# CONNECTIONS
 #===========================================================
 def get_connection():
-    return psycopg2.connect(os.getenv("DATABASE_URL"))
-
+    return psycopg2.connect(DATABASE_URL)
+client = Groq(api_key=GROQ_API_KEY)
+model = GROQ_MODEL
 #===========================================================
 # SYNTHESIZED DATA
 #===========================================================
@@ -157,6 +158,8 @@ def extract_skills(skills_string):
     llm_skills = []
     if unmatched:
         llm_skills = extract_with_llm(unmatched)
+        if llm_skills is None:
+            return None
     
     #add the new skills to known skills to increase hit chance and avoid using llm.
     for skill in llm_skills:
@@ -173,9 +176,6 @@ def extract_skills(skills_string):
 
 def extract_with_llm(unmatched):
     """Send unmatched skill as a text to LLM for extraction"""
-    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-    model = os.getenv("GEMINI_MODEL")
-    
     chunks = "; ".join(unmatched)
     prompt = f"""You are a skill extraction assistant.
     Extract individual clean tech skill names from these raw chunks.
@@ -186,34 +186,31 @@ def extract_with_llm(unmatched):
     - Return specific tool name only. Example: Testing with xUnit -> "xunit"
     - Do not include soft skills like communication, teamwork, leadership
     - Split any bundled skills separated by / or , Example: HTML/CSS -> ["html","css"], Exception: A/B Testing -> ["a/b testing"]
-    - You can use this skill set for reference: {KNOWN_SKILLS}. Don't discard skills which not mentioned in this list
+    - Return your response as a json array of strings.
     Raw chunks: {chunks}
-
     Example:
     Raw Chunks: data analysis using python; machine learning basics: regression, classification; Familiarity with Metasploit, Wireshark
     Expected Output: ["data analysis", "python", "machine learning", "metasploit", "wireshark"]"""
 
     try:
-        response = client.models.generate_content(
+        response = client.chat.completions.create(
             model=model,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=list[str]
-            )
+            messages=[{"role": "user", "content": prompt}],
+            response_format={"type": "json_object"}
         )
-        content = response.text.strip()
+        content = response.choices[0].message.content
         skills = json.loads(content)
-        return skills
+        return skills['skills']
 
     except Exception as e:
         print(f"LLM failed: {e} — skipping unmatched skills")
-        return unmatched
+        return None
 
 #============================================================
 # SEEDING JOBS
 #============================================================
-def seed_jobs(cursor, rows):
+def seed_jobs(conn, cursor, rows):
+    """Extract Details from each row and seed it into the database"""
     skill_cache = {}
     inserted_jobs = 0
     inserted_skills = 0
@@ -250,6 +247,9 @@ def seed_jobs(cursor, rows):
         salary_min, salary_max = get_salary(experience_level)
         posted_at  = random_posted_date()
         source_url = make_source_url(company, title)
+        cleaned_skills = extract_skills(raw_skills)
+        if cleaned_skills is None:
+            continue
 
         cursor.execute("""
             INSERT INTO jobs (
@@ -269,26 +269,21 @@ def seed_jobs(cursor, rows):
         job_id = cursor.fetchone()[0]
         inserted_jobs += 1
 
-        cleaned_skills = extract_skills(raw_skills)
-
         for skill in cleaned_skills:
             skill_id = get_or_create_skill(skill)
             cursor.execute("""
                 INSERT INTO job_skills (job_id, skill_id)
                 VALUES (%s, %s) """, (job_id, skill_id))
             inserted_skills += 1
-    return inserted_jobs, inserted_skills
+        conn.commit()
+        print(f"Inserted Jobs : {inserted_jobs}, Inserted Skills : {inserted_skills}")
+        
 
 #===========================================================
 # MAIN
 #===========================================================
 def main():
-    dataset_path = os.path.join(os.path.dirname(__file__), "job_dataset.csv")
-    if not os.path.exists(dataset_path):
-        print("Error: Dataset not found")
-        print("Place job_dataset.csv in database folder and try again.")
-        sys.exit(1) 
-    
+    dataset_path = os.path.join(os.path.dirname(__file__), "job_dataset_part1.csv")
     print("Reading Dataset")
     with open(dataset_path) as f:
         rows = list(csv.DictReader(f))
@@ -296,19 +291,11 @@ def main():
     print("Connecting to database")
     conn = get_connection()
     cursor = conn.cursor()
-    try:
-        print("Seeding Jobs from Dataset")
-        inserted_jobs, inserted_skills = seed_jobs(cursor, rows)
-        print("Database Seeded Succesfully")
-        print(f"Inserted Jobs : {inserted_jobs}, Inserted Skills : {inserted_skills}")
-    
-    except Exception as e:
-        conn.rollback()
-        print(f"Seeding Failed: {e}")
-    
-    finally:
-        cursor.close()
-        conn.close()
+    print("Seeding Jobs from Dataset")
+    seed_jobs(conn, cursor, rows)
+    print("Database Seeded Succesfully")
+    cursor.close()
+    conn.close()
 
 if __name__ == "__main__":
     main()

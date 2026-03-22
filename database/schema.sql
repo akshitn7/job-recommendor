@@ -1,19 +1,12 @@
--- Defines the PostgreSQL jobs table structure. 
-
--- Drop Table if Exists
-DROP TABLE IF EXISTS job_skills;
-DROP TABLE IF EXISTS skills;
-DROP TABLE IF EXISTS jobs;
-
 -- Skills Table
-CREATE TABLE skills (
+CREATE TABLE IF NOT EXISTS skills (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE
 );
 
 
 -- Job Posting
-CREATE TABLE jobs (
+CREATE TABLE IF NOT EXISTS jobs (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     company VARCHAR(255) NOT NULL,
