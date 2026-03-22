@@ -3,6 +3,13 @@ match percentage badge, skill chips, modal, loading spinner, and empty states. *
 
 /* Color palette: Dark Navy (#010A13), Purple (#6E40AA), Gold (#C89B3C), Cyan (#0DD3E6) */
 
+/* Upload section container with gradient background */
+.upload-section {
+    background: radial-gradient(ellipse 800px 400px at center, rgba(110, 64, 170, 0.15) 0%, transparent 70%);
+    padding: 60px 20px;
+    margin: 30px 0;
+}
+
 /* for upload box */
 #uploadBox{
     border: 2px dashed #0DD3E6;
@@ -18,9 +25,17 @@ match percentage badge, skill chips, modal, loading spinner, and empty states. *
     background-color: #6E40AA;
 }
 
+/* File name display */
+#fileName {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
 /* body */
 body {
-    background-color: #010A13;
+    background: linear-gradient(135deg, #010A13 0%, #1a0f2e 25%, #0a1f3f 50%, #0a1428 75%, #010A13 100%);
+    min-height: 100vh;
     color: #FFFFFF;
     font-family: Arial, sans-serif;
 }
@@ -162,6 +177,10 @@ body.light-mode .upload-btn:hover {
     box-shadow: 0 6px 16px rgba(200, 155, 60, 0.35);
 }
 
+body.light-mode .upload-section {
+    background: radial-gradient(ellipse 800px 400px at center, rgba(110, 64, 170, 0.12) 0%, rgba(200, 155, 60, 0.05) 50%, transparent 70%);
+}
+
 body.light-mode #uploadBox {
     background-color: #FFFFFF;
     border: 3px dashed #6E40AA;
@@ -171,14 +190,7 @@ body.light-mode #uploadBox {
 body.light-mode #uploadBox:hover {
     background: linear-gradient(135deg, #F5F0FF 0%, #F0F5FF 100%);
     box-shadow: 0 6px 16px rgba(110, 64, 170, 0.25);
-}
-
-body.light-mode #uploadBox p {
-    color: #1A1A1A;
-}
-
-body.light-mode #uploadBox small {
-    color: #666666;
+    border-color: #C89B3C;
 }
 
 body.light-mode .browse {
@@ -188,4 +200,412 @@ body.light-mode .browse {
 
 body.light-mode .theme-toggle {
     color: #6E40AA;
+}
+
+/* Light mode file name display */
+body.light-mode #fileName {
+    color: #6E40AA;
+}
+
+/* Form styles */
+.form-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #0A1428;
+    border: 2px solid #6E40AA;
+    border-radius: 8px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #C89B3C;
+    font-weight: bold;
+}
+
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #010A13;
+    border: 2px solid #0DD3E6;
+    color: #FFFFFF;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.form-group input[type="text"]:focus {
+    outline: none;
+    border-color: #C89B3C;
+    box-shadow: 0 0 8px rgba(200, 155, 60, 0.5);
+}
+
+/* Location search container */
+.location-search-container {
+    position: relative;
+}
+
+#locationSearch {
+    width: 100%;
+    padding: 12px;
+    background-color: #010A13;
+    border: 2px solid #0DD3E6;
+    color: #FFFFFF;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+#locationSearch:focus {
+    outline: none;
+    border-color: #C89B3C;
+    box-shadow: 0 0 8px rgba(200, 155, 60, 0.5);
+}
+
+/* Location dropdown */
+.location-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #0A1428;
+    border: 2px solid #6E40AA;
+    border-top: none;
+    max-height: 250px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10;
+}
+
+.location-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.location-dropdown li {
+    padding: 12px;
+    cursor: pointer;
+    color: #FFFFFF;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid #1A2540;
+}
+
+.location-dropdown li:hover {
+    background-color: #6E40AA;
+}
+
+.location-dropdown li.selected {
+    background-color: #6E40AA;
+    color: #C89B3C;
+    font-weight: bold;
+}
+
+/* Selected locations tags */
+.selected-locations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.location-tag {
+    display: inline-block;
+    background-color: #6E40AA;
+    color: #FFFFFF;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.remove-tag {
+    cursor: pointer;
+    margin-left: 6px;
+    font-weight: bold;
+    color: #C89B3C;
+}
+
+.remove-tag:hover {
+    color: #FF6B6B;
+}
+
+/* Submit button */
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #6E40AA;
+    color: #FFFFFF;
+    border: 2px solid #C89B3C;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #C89B3C;
+    color: #010A13;
+}
+
+.submit-btn:disabled {
+    background-color: #333;
+    cursor: not-allowed;
+}
+
+/* Results container */
+.results-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+}
+
+.results-container h2 {
+    color: #C89B3C;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.results-summary {
+    text-align: center;
+    padding: 15px;
+    background-color: #0A1428;
+    border-left: 4px solid #0DD3E6;
+    margin-bottom: 25px;
+    border-radius: 5px;
+}
+
+/* Job cards */
+.job-card {
+    background-color: #0A1428;
+    border: 2px solid #6E40AA;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+}
+
+.job-card:hover {
+    border-color: #C89B3C;
+    box-shadow: 0 0 15px rgba(200, 155, 60, 0.3);
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.job-header h3 {
+    color: #0DD3E6;
+    margin: 0 0 5px 0;
+}
+
+.company {
+    color: #C89B3C;
+    font-weight: bold;
+    margin: 0;
+}
+
+.match-badge {
+    padding: 8px 16px;
+    color: #FFFFFF;
+    font-weight: bold;
+    border-radius: 5px;
+    white-space: nowrap;
+    margin-left: 20px;
+}
+
+.job-details {
+    margin: 15px 0;
+}
+
+.job-details p {
+    margin: 8px 0;
+    color: #FFFFFF;
+}
+
+.label {
+    color: #0DD3E6;
+    font-weight: bold;
+}
+
+.job-footer {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.apply-btn {
+    flex: 1;
+    padding: 10px;
+    background-color: #6E40AA;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
+.apply-btn:hover {
+    background-color: #C89B3C;
+    color: #010A13;
+}
+
+/* Light mode form styles */
+body.light-mode .form-container {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8F5FF 100%);
+    border: 2px solid #6E40AA;
+    box-shadow: 0 8px 24px rgba(110, 64, 170, 0.2);
+}
+
+body.light-mode .form-group label {
+    color: #6E40AA;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+body.light-mode .form-group input[type="text"],
+body.light-mode #locationSearch {
+    background: linear-gradient(135deg, #F0F5FF 0%, #F5F0FF 100%);
+    border: 2px solid #C89B3C;
+    color: #333333;
+    transition: all 0.3s;
+}
+
+body.light-mode .form-group input[type="text"]:hover,
+body.light-mode #locationSearch:hover {
+    border-color: #6E40AA;
+    box-shadow: 0 4px 12px rgba(110, 64, 170, 0.1);
+}
+
+body.light-mode .form-group input[type="text"]:focus,
+body.light-mode #locationSearch:focus {
+    border-color: #6E40AA;
+    box-shadow: 0 0 12px rgba(110, 64, 170, 0.4);
+    background: #FFFFFF;
+}
+
+body.light-mode .location-dropdown {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8F5FF 100%);
+    border-color: #C89B3C;
+    box-shadow: 0 8px 24px rgba(110, 64, 170, 0.2);
+}
+
+body.light-mode .location-dropdown li {
+    color: #333333;
+    border-bottom-color: #E8E0FF;
+    transition: all 0.2s;
+}
+
+body.light-mode .location-dropdown li:hover {
+    background: linear-gradient(135deg, #F0E6FF 0%, #F5F0FF 100%);
+    color: #6E40AA;
+    font-weight: 500;
+    padding-left: 16px;
+}
+
+body.light-mode .location-dropdown li.selected {
+    background: linear-gradient(135deg, #6E40AA 0%, #8B5CF6 100%);
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+body.light-mode .location-tag {
+    background: linear-gradient(135deg, #6E40AA 0%, #8B5CF6 100%);
+    color: #FFFFFF;
+    box-shadow: 0 4px 8px rgba(110, 64, 170, 0.2);
+    border: 1px solid rgba(200, 155, 60, 0.3);
+}
+
+body.light-mode .submit-btn {
+    background: linear-gradient(135deg, #6E40AA 0%, #8B5CF6 100%);
+    border: 2px solid #C89B3C;
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(110, 64, 170, 0.2);
+    transition: all 0.3s;
+}
+
+body.light-mode .submit-btn:hover {
+    background: linear-gradient(135deg, #C89B3C 0%, #D4A373 100%);
+    color: #FFFFFF;
+    box-shadow: 0 6px 20px rgba(200, 155, 60, 0.3);
+    transform: translateY(-2px);
+}
+
+body.light-mode .results-container {
+    background: linear-gradient(135deg, #F8F5FF 0%, #F0F5FF 100%);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(110, 64, 170, 0.1);
+}
+
+body.light-mode .results-container h2 {
+    color: #6E40AA;
+    text-shadow: 0 2px 4px rgba(110, 64, 170, 0.1);
+}
+
+body.light-mode .results-summary {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8F5FF 100%);
+    border-left: 4px solid #6E40AA;
+    box-shadow: 0 4px 12px rgba(110, 64, 170, 0.1);
+    color: #333333;
+}
+
+body.light-mode .results-summary p {
+    color: #333333;
+}
+
+body.light-mode .job-card {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8F5FF 100%);
+    border: 2px solid #6E40AA;
+    box-shadow: 0 4px 12px rgba(110, 64, 170, 0.1);
+    transition: all 0.3s;
+}
+
+body.light-mode .job-card:hover {
+    border-color: #C89B3C;
+    box-shadow: 0 8px 24px rgba(110, 64, 170, 0.2);
+    transform: translateY(-2px);
+}
+
+body.light-mode .job-header h3 {
+    color: #6E40AA;
+}
+
+body.light-mode .company {
+    color: #C89B3C;
+}
+
+body.light-mode .label {
+    color: #6E40AA;
+}
+
+body.light-mode .job-details p {
+    color: #333333;
+}
+
+body.light-mode .apply-btn {
+    background: linear-gradient(135deg, #6E40AA 0%, #8B5CF6 100%);
+    color: #FFFFFF;
+    border: 2px solid #C89B3C;
+    box-shadow: 0 4px 8px rgba(110, 64, 170, 0.15);
+    transition: all 0.3s;
+}
+
+body.light-mode .apply-btn:hover {
+    background: linear-gradient(135deg, #C89B3C 0%, #D4A373 100%);
+    color: #FFFFFF;
+    box-shadow: 0 6px 16px rgba(200, 155, 60, 0.3);
 }
