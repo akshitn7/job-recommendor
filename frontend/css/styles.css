@@ -609,3 +609,32 @@ body.light-mode .apply-btn:hover {
     color: #FFFFFF;
     box-shadow: 0 6px 16px rgba(200, 155, 60, 0.3);
 }
+
+/* Section styles */
+section {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #0A1428;
+    border: 2px solid #6E40AA;
+    border-radius: 8px;
+}
+
+section h2 {
+    color: #C89B3C;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Light mode section styles */
+body.light-mode section {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8F5FF 100%);
+    border: 2px solid #6E40AA;
+    box-shadow: 0 8px 24px rgba(110, 64, 170, 0.15);
+}
+
+body.light-mode section h2 {
+    color: #6E40AA;
+    text-shadow: 0 2px 4px rgba(110, 64, 170, 0.1);
+}
