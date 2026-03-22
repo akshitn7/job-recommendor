@@ -20,21 +20,21 @@ No page reloads — everything happens on this single page. -->
         <nav class="navbar">
             <div class="logo">HireAble</div>
             <ul class="nav-links">
-                <li><a href="#">How it works</a></li>
-                <li><a href="#">Jobs</a></li>
-                <li><a href="#">Skill Gaps</a></li>
+                <li><a href="#how-it-works">How it works</a></li>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#skill-gaps">Skill Gaps</a></li>
             </ul>
             <button class="theme-toggle" id="themeToggle" title="Toggle light mode">🌙</button>
             <button class="upload-btn">Upload Resume</button>
         </nav>
     </header>
+    
     <!-- headings -->
     <h1 align="center">Your Resume.<br>Your Perfect Role.</h1>
     <p align="center">Upload your resume, explore matching jobs,<br> and discover skills that can help you advance.</p>
     
-    <!-- upload section with gradient background -->
+    <!-- upload box -->
     <div class="upload-section">
-        <!-- upload box -->
         <div class="upload-box" id="uploadBox">
         <input type="file" id="resumeInput" accept=".pdf,.docx" hidden>
         <p id="uploadText">Drop your Resume here<br> or <span class="browse">Browse File</span></p>
@@ -43,7 +43,7 @@ No page reloads — everything happens on this single page. -->
         <p id="fileName"></p>
     </div>
 
-    <!-- Form to collect primary skill and location -->
+    <!-- Input primary skill and location -->
     <div class="form-container" id="formContainer" style="display: none;">
         <div class="form-group">
             <label for="primarySkill">Primary Skill</label>
@@ -60,15 +60,48 @@ No page reloads — everything happens on this single page. -->
             </div>
             <div class="selected-locations" id="selectedLocations"></div>
         </div>
+        
+        <!-- Locations -->
+        <script type="application/json" id="locationsData">
+        {
+            "locations": [
+                "San Francisco, CA", "New York, NY", "Seattle, WA",
+                "Austin, TX", "Boston, MA", "Chicago, IL",
+                "Los Angeles, CA", "Denver, CO", "Atlanta, GA",
+                "Dallas, TX", "Miami, FL", "Portland, OR",
+                "Toronto, Canada", "Vancouver, Canada", "Montreal, Canada",
+                "London, UK", "Berlin, Germany", "Amsterdam, Netherlands",
+                "Paris, France", "Dublin, Ireland", "Stockholm, Sweden",
+                "Zurich, Switzerland", "Barcelona, Spain",
+                "Bangalore, India", "Mumbai, India", "Hyderabad, India",
+                "Singapore", "Tokyo, Japan", "Seoul, South Korea",
+                "Dubai, UAE", "Tel Aviv, Israel",
+                "Sydney, Australia", "Melbourne, Australia"
+            ]
+        }
+        </script>
 
         <button class="submit-btn" id="submitBtn">Find Matching Jobs</button>
     </div>
 
+    <!-- How it works section -->
+    <section id="how-it-works">
+        <h2>How it works</h2>
+    </section>
+
     <!-- Results section -->
-    <div class="results-container" id="resultsContainer" style="display: none;">
-        <h2>Job Matches</h2>
-        <div id="jobResults"></div>
-    </div>
+    <section id="results">
+        <h2>Results</h2>
+        <div class="results-container" id="resultsContainer" style="display: none;">
+            <h2>Job Matches</h2>
+            <div id="jobResults"></div>
+        </div>
+    </section>
+
+    <!-- Skill Gaps section -->
+    <section id="skill-gaps">
+        <h2>Skill Gaps</h2>
+    </section>
 
     <script src="js/location-search.js"></script>
     <script src="js/api.js"></script>
