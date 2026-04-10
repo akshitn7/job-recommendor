@@ -1,12 +1,9 @@
 # Compares the user's extracted skills against each job's required skills from the database. 
 # Calculates match percentage, filters out jobs below 60%, identifies skill gaps per job, and 
 # returns results ranked by match percentage.
-
-MATCH_THRESHOLD = 40
- 
-def match_jobs(user_skills, jobs):
+def match_jobs(user_skills, jobs, match_threshold):
     """
-    Compare user skills and returned match jobs
+    Compare user skills and return matched jobs
     """
     user_skills_set = set(s.lower() for s in user_skills)
     matched_jobs = []
@@ -19,7 +16,7 @@ def match_jobs(user_skills, jobs):
  
         matched_skills = user_skills_set & required_skills
         match_percent = round(len(matched_skills) / len(required_skills) * 100, 1)
-        if match_percent <= MATCH_THRESHOLD:
+        if match_percent <= match_threshold:
             continue
         skill_gaps = required_skills - user_skills_set
         matched_jobs.append({

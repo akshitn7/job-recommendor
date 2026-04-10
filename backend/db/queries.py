@@ -3,6 +3,7 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
 from sqlalchemy import text
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -24,51 +25,14 @@ def fetch_jobs(primary_skill, location):
     db = next(get_db())
  
     try:
-        # Base query — joins jobs with their skills
-        query = """
-            SELECT
-                j.id,
-                j.title,
-                j.company,
-                j.location,
-                j.job_type,
-                j.experience_level,
-                j.salary_min,
-                j.salary_max,
-                j.source_url,
-                ARRAY_AGG(LOWER(s.name)) AS required_skills
-            FROM jobs j
-            JOIN job_skills js ON j.id = js.job_id
-            JOIN skills s ON js.skill_id = s.id
+        query = f"""
+            SELECT * FROM jobs_with_skills
+            WHERE '{primary_skill}' = ANY(required_skills)
         """
- 
-        filters = []
-        params = {}
- 
-        # Filter by primary skill
-        if primary_skill:
-            filters.append("""
-                j.id IN (
-                    SELECT js2.job_id FROM job_skills js2
-                    JOIN skills s2 ON js2.skill_id = s2.id
-                    WHERE LOWER(s2.name) = LOWER(:primary_skill)
-                )
-            """)
-            params["primary_skill"] = primary_skill
- 
-        # Filter by location
-        if location and location.lower() != "any":
-            filters.append("(LOWER(j.location) = LOWER(:location) OR LOWER(j.job_type) = 'remote')")
-            params["location"] = location
- 
-        # Append WHERE clause if filters exist
-        if filters:
-            query += " WHERE " + " AND ".join(filters)
- 
-        # Group by job id to aggregate skills
-        query += " GROUP BY j.id"
- 
-        result = db.execute(text(query), params)
+        if location:
+            query += f""" AND location = '{location}';"""
+
+        result = db.execute(text(query))
         rows = result.fetchall()
  
         jobs = []
@@ -83,7 +47,7 @@ def fetch_jobs(primary_skill, location):
                 "salary_min": row.salary_min,
                 "salary_max": row.salary_max,
                 "source_url": row.source_url,
-                "required_skills": row.required_skills or []
+                "required_skills": row.required_skills
             })
  
         return jobs

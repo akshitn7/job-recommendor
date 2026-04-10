@@ -5,11 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.recommend import router as recommend_router
  
-app = FastAPI(
-    title="HireAble",
-    description="AI powered job recommendation system",
-    version="1.0.0"
-)
+app = FastAPI(title="HireAble")
  
 # CORS — allows frontend to talk to backend
 app.add_middleware(
