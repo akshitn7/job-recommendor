@@ -14,7 +14,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="HireAble", lifespan=lifespan)
 
-# CORS — allows frontend to talk to backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
