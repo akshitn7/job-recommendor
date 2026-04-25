@@ -1,7 +1,8 @@
 -- Skills Table
 CREATE TABLE IF NOT EXISTS skills (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE
+    name VARCHAR(100) NOT NULL UNIQUE,
+    embedding vector(384)
 );
 
 

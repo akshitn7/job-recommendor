@@ -13,9 +13,10 @@ from datetime import date, timedelta
 import psycopg2
 import json
 from groq import Groq
+from sentence_transformers import SentenceTransformer
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import DATABASE_URL, GROQ_API_KEY, GROQ_MODEL
+from config import DATABASE_URL, GROQ_API_KEY, GROQ_MODEL, SENTENCE_TRANSFORMER_MODEL
 #===========================================================
 # CONNECTIONS
 #===========================================================
@@ -23,6 +24,8 @@ def get_connection():
     return psycopg2.connect(DATABASE_URL)
 client = Groq(api_key=GROQ_API_KEY)
 model = GROQ_MODEL
+sentence_transformer_model = SentenceTransformer(SENTENCE_TRANSFORMER_MODEL)
+
 #===========================================================
 # SYNTHESIZED DATA
 #===========================================================
@@ -118,7 +121,8 @@ def seed_jobs(conn, cursor, rows):
 
     def get_skill_id(skill):
         if skill not in skill_cache:
-            cursor.execute("INSERT INTO skills(name) VALUES (%s) RETURNING id", (skill,))
+            embedding = sentence_transformer_model.encode([skill])[0].tolist()
+            cursor.execute("INSERT INTO skills(name, embedding) VALUES (%s, %s) RETURNING id", (skill, embedding))
             skill_id = cursor.fetchone()[0]
             skill_cache[skill] = skill_id
             return skill_id
