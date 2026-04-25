@@ -883,6 +883,9 @@ body.light-mode .spinner {
     flex-wrap: wrap;
     gap: 8px;
 }
+.skill-chips--centered {
+    justify-content: center;
+}
 
 .skill-chip {
     display: inline-flex;
@@ -998,11 +1001,12 @@ body.light-mode .no-gaps-msg {
     font-size: 12px; font-weight: 600;
     padding: 5px 14px; border-radius: 20px;
     white-space: nowrap;
+    color: #c9d1d9;
 }
-.card-match-pill.match-high { background: rgba(76,175,80,0.15); color: #4CAF50; border: 1px solid rgba(76,175,80,0.4); }
-.card-match-pill.match-mid  { background: rgba(255,193,7,0.15); color: #FFC107; border: 1px solid rgba(255,193,7,0.4); }
-.card-match-pill.match-ok   { background: rgba(255,152,0,0.15); color: #FF9800; border: 1px solid rgba(255,152,0,0.4); }
-.card-match-pill.match-low  { background: rgba(255,107,107,0.15); color: #FF6B6B; border: 1px solid rgba(255,107,107,0.4); }
+.card-match-pill.match-high { background: rgba(76,175,80,0.15); border: 1px solid rgba(76,175,80,0.4); }
+.card-match-pill.match-mid  { background: rgba(255,193,7,0.15); border: 1px solid rgba(255,193,7,0.4); }
+.card-match-pill.match-ok   { background: rgba(255,152,0,0.15); border: 1px solid rgba(255,152,0,0.4); }
+.card-match-pill.match-low  { background: rgba(255,107,107,0.15); border: 1px solid rgba(255,107,107,0.4); }
 
 /* Title & company */
 .card-title {
@@ -1018,7 +1022,7 @@ body.light-mode .no-gaps-msg {
     display: inline-flex; align-items: center; gap: 4px;
     font-size: 12px; color: #8b949e;
 }
-.meta-icon { font-size: 12px; }
+.meta-icon { font-size: 12px; display: inline-flex; align-items: center; }
 
 /* Progress bar */
 .card-match-bar-section {
@@ -1043,20 +1047,12 @@ body.light-mode .no-gaps-msg {
     background: rgba(139,148,158,0.15); color: #8b949e; border-color: rgba(139,148,158,0.3);
 }
 
-/* Bottom row: salary + view btn */
+/* Bottom row: salary */
 .card-bottom-row {
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; justify-content: flex-start; align-items: center;
     margin-top: auto; padding-top: 8px; border-top: 1px solid #21262d;
 }
 .card-salary { font-size: 15px; font-weight: 700; color: #e6edf3; }
-.card-view-btn {
-    font-size: 13px; font-weight: 600; color: #58a6ff;
-    padding: 7px 18px; border: 1px solid #30363d; border-radius: 8px;
-    text-decoration: none; transition: all 0.3s;
-}
-.card-view-btn:hover {
-    background: rgba(88,166,255,0.1); border-color: #58a6ff;
-}
 
 .no-results-msg {
     text-align: center; padding: 40px; color: #8b949e;
@@ -1124,6 +1120,9 @@ body.light-mode .no-gaps-msg {
 .no-gaps-banner {
     display: flex; align-items: center; gap: 12px; padding: 16px 0;
 }
+.no-gaps-banner--centered {
+    justify-content: center;
+}
 .no-gaps-icon { font-size: 28px; }
 
 /* Extracted skills card */
@@ -1154,8 +1153,7 @@ body.light-mode .card-skill-chip {
 }
 body.light-mode .card-bottom-row { border-top-color: #e5e7eb; }
 body.light-mode .card-salary { color: #24292f; }
-body.light-mode .card-view-btn { color: #0969da; border-color: #d0d7de; }
-body.light-mode .card-view-btn:hover { background: rgba(9,105,218,0.06); border-color: #0969da; }
+body.light-mode .card-match-pill { color: #24292f; }
 
 body.light-mode .skill-intel-label { color: #0969da; }
 body.light-mode .skill-intel-heading { color: #24292f; }

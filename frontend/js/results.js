@@ -1,3 +1,11 @@
+/* SVG icon helpers – small inline icons to replace emojis */
+const SVG_ICONS = {
+    building: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01M8 14h.01M16 14h.01M12 14h.01"/></svg>`,
+    briefcase: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`,
+    calendar: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
+    checkCircle: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`,
+};
+
 function renderResults(data) {
     const jobResults = document.getElementById("jobResults");
     jobResults.innerHTML = "";
@@ -8,12 +16,6 @@ function renderResults(data) {
         jobResults.innerHTML = `<div class="no-results-msg"><p>No matching jobs found. Try adjusting your filters.</p></div>`;
         return;
     }
-
-    const avgMatch = Math.round(jobs.reduce((sum, j) => sum + j.match_percent, 0) / jobs.length);
-    const summary = document.createElement("div");
-    summary.className = "results-summary";
-    summary.innerHTML = `<p>Based on skills extracted from your resume. Sorted by match %. Found <strong>${jobs.length}</strong> jobs &bull; Average Match: <strong>${avgMatch}%</strong></p>`;
-    jobResults.appendChild(summary);
 
     const grid = document.createElement("div");
     grid.className = "job-cards-grid";
@@ -30,8 +32,10 @@ function renderResults(data) {
         else if (job.match_percent >= MATCH_THRESHOLDS.LOW)  barColor = COLORS.matchLow;
 
         let salary = "Not specified";
-        if (job.salary_min && job.salary_max) {
-            salary = `₹${(job.salary_min / 1000).toFixed(0)}k – ₹${(job.salary_max / 1000).toFixed(0)}k`;
+        if (job.salary) {
+            salary = `₹${(job.salary / 1000).toFixed(0)}k`;
+        } else if (job.salary_min) {
+            salary = `₹${(job.salary_min / 1000).toFixed(0)}k`;
         }
 
         const initial = (job.company || "?")[0].toUpperCase();
@@ -40,25 +44,21 @@ function renderResults(data) {
         const expLevel = job.experience_level || "";
 
         const matchedSkills = job.matched_skills || [];
-        const visibleSkills = matchedSkills.slice(0, MAX_VISIBLE_SKILLS);
-        const extraCount = matchedSkills.length - MAX_VISIBLE_SKILLS;
-
-        const skillChipsHTML = visibleSkills.map(s => `<span class="card-skill-chip">${s}</span>`).join("") +
-            (extraCount > 0 ? `<span class="card-skill-chip card-skill-extra">+${extraCount}</span>` : "");
+        const skillChipsHTML = matchedSkills.map(s => `<span class="card-skill-chip">${s}</span>`).join("");
 
         const card = document.createElement("div");
         card.className = "job-card";
         card.innerHTML = `
             <div class="card-top-row">
                 <div class="card-avatar" style="background-color: ${avatarColor}">${initial}</div>
-                <div class="card-match-pill ${matchClass}">● ${job.match_percent}% Match</div>
+                <div class="card-match-pill ${matchClass}">${job.match_percent}% Match</div>
             </div>
             <h3 class="card-title">${job.title}</h3>
             <p class="card-company">${job.company}${job.location ? " · " + job.location : ""}</p>
             <div class="card-meta-tags">
-                ${job.location ? `<span class="card-meta-tag"><span class="meta-icon">🏢</span>${job.location.includes("Remote") ? "Remote" : "On-site"}</span>` : ""}
-                <span class="card-meta-tag"><span class="meta-icon">💼</span>${jobType}</span>
-                ${expLevel ? `<span class="card-meta-tag"><span class="meta-icon">📅</span>${expLevel}</span>` : ""}
+                ${job.location ? `<span class="card-meta-tag"><span class="meta-icon">${SVG_ICONS.building}</span>${job.location.includes("Remote") ? "Remote" : "On-site"}</span>` : ""}
+                <span class="card-meta-tag"><span class="meta-icon">${SVG_ICONS.briefcase}</span>${jobType}</span>
+                ${expLevel ? `<span class="card-meta-tag"><span class="meta-icon">${SVG_ICONS.calendar}</span>${expLevel}</span>` : ""}
             </div>
             <div class="card-match-bar-section">
                 <span class="card-match-label">Skill Match</span>
@@ -70,7 +70,6 @@ function renderResults(data) {
             <div class="card-skills-row">${skillChipsHTML}</div>
             <div class="card-bottom-row">
                 <span class="card-salary">${salary}</span>
-                <a href="${job.source_url || "#"}" target="_blank" class="card-view-btn">View Details →</a>
             </div>
         `;
         grid.appendChild(card);
@@ -93,70 +92,30 @@ function renderSkillGaps(data) {
         });
     });
     const sortedGaps = Object.entries(gapCount).sort((a, b) => b[1] - a[1]);
-    const topJob = jobs.length > 0 ? jobs[0] : null;
 
-    let html = `<div class="skill-intel-layout">`;
-
-    html += `
-        <div class="skill-intel-left">
-            <span class="skill-intel-label">SKILL INTELLIGENCE</span>
-            <h3 class="skill-intel-heading">Know Exactly What to Learn Next</h3>
-            <p class="skill-intel-desc">We don't just show you jobs — we show you the precise skills standing between you and your next role. Close the gap faster.</p>
-            <div class="skill-intel-features">
-                <div class="skill-intel-feature">
-                    <span class="feature-icon">🎯</span>
-                    <div>
-                        <strong>Targeted Learning</strong>
-                        <span>Only learn what matters</span>
-                    </div>
-                </div>
-                <div class="skill-intel-feature">
-                    <span class="feature-icon">⚡</span>
-                    <div>
-                        <strong>Get Noticed Faster</strong>
-                        <span>Close gaps, boost match %</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    html += `<div class="skill-intel-right"><div class="skill-gap-card">`;
+    let html = '';
 
     if (sortedGaps.length > 0) {
-        const headerText = topJob ? `Missing Skills — ${topJob.title} @ ${topJob.company}` : "Skills to Learn";
-        html += `<p class="gap-card-header">${headerText}</p>`;
-
-        sortedGaps.slice(0, SKILL_GAP.MAX_DISPLAY).forEach(([skill, count], idx) => {
-            const demandIdx = idx % SKILL_GAP.ICONS.length;
-            const demandLevel = count >= 3 ? "High demand" : count >= 2 ? "Medium demand" : SKILL_GAP.DEMAND_LABELS[demandIdx];
-            const timeEst = SKILL_GAP.TIME_ESTIMATES[demandIdx];
-
-            html += `
-                <div class="gap-skill-row">
-                    <div class="gap-skill-icon">${SKILL_GAP.ICONS[demandIdx]}</div>
-                    <div class="gap-skill-info">
-                        <strong>${skill}</strong>
-                        <span>${demandLevel} · ${timeEst}</span>
-                    </div>
-                    <a href="https://www.google.com/search?q=learn+${encodeURIComponent(skill)}" target="_blank" class="gap-learn-btn">Learn →</a>
+        html += `
+            <div class="skill-group">
+                <h3 class="skill-group-title">Skills to Learn</h3>
+                <div class="skill-chips skill-chips--centered">
+                    ${sortedGaps.slice(0, SKILL_GAP.MAX_DISPLAY).map(([skill]) => `<span class="skill-chip skill-chip--gap">${skill}</span>`).join("")}
                 </div>
-            `;
-        });
+            </div>
+        `;
     } else {
-        html += `<div class="no-gaps-banner">
-            <span class="no-gaps-icon">🎉</span>
+        html += `<div class="no-gaps-banner no-gaps-banner--centered">
+            ${SVG_ICONS.checkCircle}
             <p class="no-gaps-msg">Great news — you already have all the skills required for your matched jobs!</p>
         </div>`;
     }
-
-    html += `</div></div></div>`;
 
     if (extractedSkills.length > 0) {
         html += `
             <div class="skill-group extracted-skills-card">
                 <h3 class="skill-group-title">Your Extracted Skills</h3>
-                <div class="skill-chips">
+                <div class="skill-chips skill-chips--centered">
                     ${extractedSkills.map(s => `<span class="skill-chip skill-chip--have">${s}</span>`).join("")}
                 </div>
             </div>
