@@ -9,7 +9,6 @@ async function uploadResume(file, primarySkill, location, threshold) {
     const response = await fetch("http://localhost:8000/api/recommend", {
         method: "POST",
         body: formData,
-        // ⚠️ Do NOT set Content-Type — browser sets it automatically
     });
 
     const data = await response.json();

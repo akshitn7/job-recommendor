@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    // --- element refs ---
     const uploadBox      = document.getElementById("uploadBox");
     const resumeInput    = document.getElementById("resumeInput");
     const fileNameDisplay = document.getElementById("fileName");
@@ -55,7 +54,6 @@ document.addEventListener("DOMContentLoaded", function () {
         fileNameDisplay.textContent = `Selected: ${file.name}`;
         fileNameDisplay.style.color = COLORS.accent;
 
-        // show the skill + location form
         formContainer.style.display = "block";
         formContainer.scrollIntoView({ behavior: "smooth", block: "start" });
         skillInput.focus();
@@ -100,7 +98,6 @@ document.addEventListener("DOMContentLoaded", function () {
             fileNameDisplay.style.color = COLORS.error;
             spinner.classList.remove("active");
 
-            // re-enable after 4 seconds
             setTimeout(() => {
                 submitBtn.disabled = false;
                 fileNameDisplay.textContent = `Selected: ${currentFile.name}`;
