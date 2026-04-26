@@ -32,10 +32,12 @@ function renderResults(data) {
         else if (job.match_percent >= MATCH_THRESHOLDS.LOW)  barColor = COLORS.matchLow;
 
         let salary = "Not specified";
+        const formatLakhs = (val) => `₹${(val / 100000).toFixed(1).replace(/\.0$/, '')}L`;
+
         if (job.salary) {
-            salary = `₹${(job.salary / 1000).toFixed(0)}k`;
+            salary = formatLakhs(job.salary);
         } else if (job.salary_min) {
-            salary = `₹${(job.salary_min / 1000).toFixed(0)}k`;
+            salary = formatLakhs(job.salary_min);
         }
 
         const initial = (job.company || "?")[0].toUpperCase();
@@ -43,8 +45,21 @@ function renderResults(data) {
         const jobType = job.job_type || "Full-time";
         const expLevel = job.experience_level || "";
 
-        const matchedSkills = job.matched_skills || [];
-        const skillChipsHTML = matchedSkills.map(s => `<span class="card-skill-chip">${s}</span>`).join("");
+        // Skills logic
+        const exactMatches = job.exact_matches || [];
+        const semanticMatches = job.semantic_matches || [];
+        const unmatched = job.unmatched || [];
+
+        const exactSkillsHTML = exactMatches.map(s => `<span class="card-skill-chip">${s}</span>`).join("");
+        const semanticSkillsHTML = semanticMatches.map(s => `
+            <div class="semantic-match-item">
+                <span class="card-skill-chip semantic-job-skill">${s.job_skill}</span>
+                <span class="semantic-match-arrow">↔</span>
+                <span class="card-skill-chip semantic-user-skill">${s.matched_by}</span>
+            </div>
+        `).join("");
+        
+        const unmatchedSkillsHTML = [...new Set(unmatched)].map(s => `<span class="card-skill-chip skill-chip--gap">${s}</span>`).join("");
 
         const card = document.createElement("div");
         card.className = "job-card";
@@ -60,6 +75,7 @@ function renderResults(data) {
                 <span class="card-meta-tag"><span class="meta-icon">${SVG_ICONS.briefcase}</span>${jobType}</span>
                 ${expLevel ? `<span class="card-meta-tag"><span class="meta-icon">${SVG_ICONS.calendar}</span>${expLevel}</span>` : ""}
             </div>
+            
             <div class="card-match-bar-section">
                 <span class="card-match-label">Skill Match</span>
                 <div class="card-match-bar-track">
@@ -67,9 +83,30 @@ function renderResults(data) {
                 </div>
                 <span class="card-match-value">${job.match_percent}%</span>
             </div>
-            <div class="card-skills-row">${skillChipsHTML}</div>
+
+            <div class="match-details-buttons">
+                <button class="match-detail-toggle" onclick="toggleMatchDetail(this, 'exact-${job.id}')">Show matched skills</button>
+                <button class="match-detail-toggle" onclick="toggleMatchDetail(this, 'semantic-${job.id}')">Show semantic matched skills</button>
+            </div>
+
+            <div id="exact-${job.id}" class="match-detail-content hidden">
+                <div class="detail-label">Exact Matches:</div>
+                <div class="card-skills-row">${exactSkillsHTML || "None"}</div>
+            </div>
+
+            <div id="semantic-${job.id}" class="match-detail-content hidden">
+                <div class="detail-label">Semantic Matches:</div>
+                <div class="semantic-skills-list">${semanticSkillsHTML || "None"}</div>
+            </div>
+
+            <div class="card-skill-gap-section">
+                <div class="detail-label">Unmatched Skills:</div>
+                <div class="card-skills-row">${unmatchedSkillsHTML || "None"}</div>
+            </div>
+
             <div class="card-bottom-row">
                 <span class="card-salary">${salary}</span>
+                ${job.source_url ? `<a href="${job.source_url}" target="_blank" class="source-url-btn">Apply Now</a>` : ""}
             </div>
         `;
         grid.appendChild(card);
@@ -77,6 +114,26 @@ function renderResults(data) {
 
     jobResults.appendChild(grid);
 }
+
+function toggleMatchDetail(btn, contentId) {
+    const content = document.getElementById(contentId);
+    if (!content) return;
+    
+    const isHidden = content.classList.contains('hidden');
+    
+    // Close all other details in the same card if desired, 
+    // but for now let's just toggle the current one.
+    content.classList.toggle('hidden');
+    
+    if (isHidden) {
+        btn.textContent = btn.textContent.replace('Show', 'Hide');
+        btn.classList.add('active');
+    } else {
+        btn.textContent = btn.textContent.replace('Hide', 'Show');
+        btn.classList.remove('active');
+    }
+}
+
 
 function renderSkillGaps(data) {
     const content = document.getElementById("skillGapsContent");
@@ -87,7 +144,7 @@ function renderSkillGaps(data) {
 
     const gapCount = {};
     jobs.forEach(job => {
-        (job.skill_gaps || []).forEach(skill => {
+        (job.unmatched || []).forEach(skill => {
             gapCount[skill] = (gapCount[skill] || 0) + 1;
         });
     });
@@ -110,6 +167,7 @@ function renderSkillGaps(data) {
             <p class="no-gaps-msg">Great news — you already have all the skills required for your matched jobs!</p>
         </div>`;
     }
+
 
     if (extractedSkills.length > 0) {
         html += `

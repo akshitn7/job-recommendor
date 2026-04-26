@@ -75,8 +75,14 @@ document.addEventListener("DOMContentLoaded", function () {
         fileNameDisplay.style.color = COLORS.info;
 
         try {
-            console.log("Sending:", { primarySkill: skill, location: location, match_threshold: threshold });
-            const result = await uploadResume(currentFile, skill, location, threshold);
+            let result;
+            if (typeof USE_MOCK_DATA !== "undefined" && USE_MOCK_DATA) {
+                await new Promise(r => setTimeout(r, 800));
+                result = MOCK_RESPONSE;
+            } else {
+                console.log("Sending:", { primarySkill: skill, location: location, match_threshold: threshold });
+                result = await uploadResume(currentFile, skill, location, threshold);
+            }
 
             fileNameDisplay.textContent = "Done! Showing results below.";
             spinner.classList.remove("active");
