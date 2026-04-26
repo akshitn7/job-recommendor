@@ -6,6 +6,7 @@ import numpy as np
 from sqlalchemy import text
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from pgvector.sqlalchemy import Vector
 
 from config import DATABASE_URL
 
@@ -73,21 +74,21 @@ def fetch_jobs(primary_skill: str, location: str):
         db.close()
 
 
-def load_skill_embeddings() -> dict:
+def load_skill_embeddings():
     db = next(get_db())
-
     try:
-        result = db.execute(
-            text("SELECT name, embedding FROM skills WHERE embedding IS NOT NULL")
-        )
+        result = db.execute(text("SELECT name, embedding FROM skills WHERE embedding IS NOT NULL"))
         rows = result.fetchall()
 
         skill_embeddings = {}
         for name, embedding in rows:
-            skill_embeddings[name.lower().strip()] = np.array(embedding)
+            if isinstance(embedding, str):
+                vector = np.array([float(x) for x in embedding.strip('[]').split(',')])
+            else:
+                vector = np.array(embedding)
+            skill_embeddings[name.lower().strip()] = vector
 
         print(f"[startup] Loaded embeddings for {len(skill_embeddings)} skills.")
         return skill_embeddings
-
     finally:
         db.close()
