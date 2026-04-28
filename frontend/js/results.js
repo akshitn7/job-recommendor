@@ -90,17 +90,17 @@ function renderResults(data) {
             </div>
 
             <div id="exact-${job.id}" class="match-detail-content hidden">
-                <div class="detail-label">Exact Matches:</div>
+                <div class="detail-label">Skills you already have:</div>
                 <div class="card-skills-row">${exactSkillsHTML || "None"}</div>
             </div>
 
             <div id="semantic-${job.id}" class="match-detail-content hidden">
-                <div class="detail-label">Semantic Matches:</div>
+                <div class="detail-label">Skills you might have:</div>
                 <div class="semantic-skills-list">${semanticSkillsHTML || "None"}</div>
             </div>
 
             <div class="card-skill-gap-section">
-                <div class="detail-label">Unmatched Skills:</div>
+                <div class="detail-label"> Skills you dont have:</div>
                 <div class="card-skills-row">${unmatchedSkillsHTML || "None"}</div>
             </div>
 
